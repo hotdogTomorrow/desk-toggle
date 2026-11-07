@@ -4,9 +4,22 @@
 
 C++ / Win32 原生程序，无安装器，无额外运行时依赖，无联网、遥测、广告和自动更新。
 
+## 下载
+
+**普通用户下载后即可运行，无需编译或安装开发工具。**
+
+| 电脑类型 | 直接运行 | 含说明的便携包 |
+| --- | --- | --- |
+| 大多数 Intel／AMD Windows 11 电脑 | [下载 x64 EXE](https://github.com/hotdogTomorrow/desk-toggle/releases/latest/download/DeskToggle-x64.exe) | [下载 x64 ZIP](https://github.com/hotdogTomorrow/desk-toggle/releases/latest/download/DeskToggle-x64.zip) |
+| Windows ARM 电脑 | [下载 ARM64 EXE](https://github.com/hotdogTomorrow/desk-toggle/releases/latest/download/DeskToggle-ARM64.exe) | [下载 ARM64 ZIP](https://github.com/hotdogTomorrow/desk-toggle/releases/latest/download/DeskToggle-ARM64.zip) |
+
+下载 EXE 后放在固定文件夹中，双击运行；ZIP 则先解压，再运行里面的 `DeskToggle.exe`。无需管理员权限或额外运行库。
+
+[查看全部版本与更新说明](https://github.com/hotdogTomorrow/desk-toggle/releases)。Release 页自动附带的 `Source code` 是源码包，普通用户请选择 `DeskToggle-*.exe` 或 `DeskToggle-*.zip`。
+
 ## 使用
 
-1. 将 `DeskToggle.exe` 放在一个固定文件夹中，双击运行。无需管理员权限。
+1. 将下载的 EXE（或 ZIP 中的 `DeskToggle.exe`）放在一个固定文件夹中，双击运行。无需管理员权限。
 2. 双击桌面空白处，隐藏或显示桌面上的全部图标。双击图标本身仍由 Windows 正常处理。
 3. 右键任务栏通知区域中的蓝色显示器图标，可以切换显隐、恢复图标、开启／关闭开机自启或退出。
 
@@ -59,9 +72,9 @@ ctest --test-dir build -C Release --output-on-failure
 
 产物：`build/Release/DeskToggle.exe`。ARM64 可将配置命令改成 `-A ARM64`，并安装相应的 MSVC ARM64 构建工具。
 
-运行 `scripts/Package.ps1 -Architecture x64` 可生成 `dist/DeskToggle-x64.zip` 和 SHA-256 校验文件；脚本会核对 EXE 的实际架构，避免把不同架构误打包。
+运行 `scripts/Package.ps1 -Architecture x64` 可生成 `dist/DeskToggle-x64.exe`、`dist/DeskToggle-x64.zip` 和各自的 SHA-256 校验文件；脚本会核对 EXE 的实际架构，避免把不同架构误打包。
 
-GitHub Actions 会编译 x64 与 ARM64，在 x64 上运行手势规则测试，分别生成只包含 EXE、README 和许可证的便携 ZIP。开发者测试程序不会打包，Release 不包含 PDB 或本机调试路径。
+GitHub Actions 会编译 x64 与 ARM64，在 x64 上运行手势规则测试，分别生成独立 EXE 和只包含 EXE、README、许可证的便携 ZIP。开发者测试程序不会打包，Release 不包含 PDB 或本机调试路径。推送 `v*` 版本标签后，只有两种架构都构建成功且文件校验通过，才会自动创建带下载附件的 GitHub Release；版本说明放在 `docs/releases/<标签>.md`。
 
 图标是项目自己的代码绘制资源，修改后可用 `scripts/New-Icon.ps1` 重建，无第三方图片依赖。
 
