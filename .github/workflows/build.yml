@@ -1,0 +1,34 @@
+name: Build and test
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  windows:
+    runs-on: windows-2022
+    strategy:
+      matrix:
+        arch: [x64, ARM64]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -S . -B build -A ${{ matrix.arch }}
+      - name: Build Release
+        run: cmake --build build --config Release --parallel
+      - name: Test gesture rules
+        if: matrix.arch == 'x64'
+        run: ctest --test-dir build -C Release --output-on-failure
+      - name: Package portable app
+        shell: pwsh
+        run: ./scripts/Package.ps1 -Architecture ${{ matrix.arch }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: DeskToggle-${{ matrix.arch }}
+          path: |
+            dist/DeskToggle-${{ matrix.arch }}.zip
+            dist/DeskToggle-${{ matrix.arch }}.zip.sha256
+          if-no-files-found: error

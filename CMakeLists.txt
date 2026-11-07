@@ -1,0 +1,40 @@
+cmake_minimum_required(VERSION 3.24)
+project(DeskToggle VERSION 0.1.0 LANGUAGES CXX RC)
+
+if(NOT WIN32 OR NOT MSVC)
+  message(FATAL_ERROR "Build with MSVC and the Windows SDK on Windows.")
+endif()
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
+function(desk_options target)
+  target_compile_definitions(${target} PRIVATE UNICODE _UNICODE WIN32_LEAN_AND_MEAN NOMINMAX _WIN32_WINNT=0x0A00)
+  target_compile_options(${target} PRIVATE /W4 /WX /permissive- /utf-8 /guard:cf)
+  target_compile_options(${target} PRIVATE $<$<CONFIG:Release>:/O1> $<$<CONFIG:Release>:/GL>)
+  target_link_options(${target} PRIVATE /DYNAMICBASE /NXCOMPAT /guard:cf $<$<CONFIG:Release>:/LTCG> $<$<CONFIG:Release>:/DEBUG:NONE> $<$<CONFIG:Release>:/INCREMENTAL:NO> $<$<CONFIG:Release>:/Brepro>)
+endfunction()
+
+add_library(desk_core STATIC src/desktop.cpp src/startup.cpp)
+target_include_directories(desk_core PUBLIC src)
+target_link_libraries(desk_core PUBLIC user32 shell32 ole32 oleaut32 oleacc uuid advapi32)
+desk_options(desk_core)
+
+add_executable(DeskToggle WIN32 src/main.cpp assets/app.rc)
+target_link_libraries(DeskToggle PRIVATE desk_core gdi32)
+target_include_directories(DeskToggle PRIVATE assets)
+target_link_options(DeskToggle PRIVATE /MANIFEST:NO)
+desk_options(DeskToggle)
+
+include(CTest)
+if(BUILD_TESTING)
+  add_executable(gesture_tests tests/gesture_tests.cpp)
+  target_include_directories(gesture_tests PRIVATE src)
+  desk_options(gesture_tests)
+  add_test(NAME gesture COMMAND gesture_tests)
+
+  add_executable(shell_probe tests/shell_probe.cpp)
+  target_link_libraries(shell_probe PRIVATE desk_core)
+  desk_options(shell_probe)
+endif()

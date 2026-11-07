@@ -1,0 +1,17 @@
+/build*/
+/dist/
+/artifacts/
+/.vs/
+/.vscode/
+/.idea/
+/.env*
+*.user
+*.suo
+*.pdb
+*.ilk
+*.obj
+*.log
+*.dmp
+CMakeUserPresets.json
+Thumbs.db
+Desktop.ini
