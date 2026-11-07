@@ -60,6 +60,17 @@ int main() {
     g.Down({0, 0}, 250, 1, true);
     Check(!g.Up({0, 0}, 270, 1, false), "release on icon cancels candidate");
     Check(!g.Up({0, 0}, 280, 1, true), "orphan release is rejected");
+    g = NewGesture();
+    Click(g, {100, 100}, 100);
+    Check(Click(g, {100, 100}, 200), "restore gesture completes normally");
+    Check(!Click(g, {100, 100}, 10000), "delayed single click after restore does nothing");
+    Check(!Click(g, {100, 100}, 20000), "separate later single clicks never form a pair");
+    g = NewGesture();
+    Click(g, {0, 0}, 100);
+    g.Down({0, 0}, 200, 1, true);
+    g.Move({100, 0});
+    Check(!g.Up({0, 0}, 220, 1, true), "dragging second click cancels the pair");
+    Check(!Click(g, {0, 0}, 300), "single click after cancelled pair does nothing");
     std::printf("%d gesture checks passed\n", count);
     return 0;
 }
